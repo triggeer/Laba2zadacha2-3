@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 class Program
 {
@@ -6,13 +6,14 @@ class Program
     {
         // Ввод координат первой точки
         Console.WriteLine("Введите координаты первой точки");
-        double x1 = GetCoordinate("x1");
-        double y1 = GetCoordinate("y1");
+        Program program = new Program();
+        double x1 = program.GetCoordinate("x1");
+        double y1 = program.GetCoordinate("y1");
 
         // Ввод координат второй точки
         Console.WriteLine("Введите координаты второй точки");
-        double x2 = GetCoordinate("x2");
-        double y2 = GetCoordinate("y2");
+        double x2 = program.GetCoordinate("x2");
+        double y2 = program.GetCoordinate("y2");
 
         // Создание точек
         Point p1 = new Point(x1, y1);
@@ -23,38 +24,34 @@ class Program
         Console.WriteLine($"Точка 2: {p2}");
 
         // Увеличение координаты x у первой точки (унарный оператор ++)
-        p1++;
+        p1.IncrementX();
         Console.WriteLine($"После увеличения x у p1: {p1}");
 
         // Уменьшение координаты x у первой точки (унарный оператор --)
-        p1--;
+        p1.DecrementX();
         Console.WriteLine($"После уменьшения x у p1: {p1}");
 
-        // Вычисление и вывод расстояния между p1 и p2 (перегруженный оператор +)
-        double distance = p1.distanceXY(p2);
+        // Вычисление и вывод расстояния между p1 и p2
+        double distance = p1.DistanceTo(p2);
         Console.WriteLine($"Расстояние между p1 и p2: {distance}");
 
         // Приведение к типу int и double
-        int xAsInt = (int)p1; // Явное приведение к int (возвращает x)
-        double yAsDouble = p1; // Неявное приведение к double (возвращает y)
+        int xAsInt = p1.ToInt(); 
+        double yAsDouble = p1.ToDouble();  
         Console.WriteLine($"p1 как int (x): {xAsInt}, p1 как double (y): {yAsDouble}");
 
         // Ввод целого числа с клавиатуры, на которое увеличивается x
-        int incrementValue = GetInteger("Введите целое число для увеличения x");
+        int incrementValue = program.GetInteger("Введите целое число для увеличения x");
 
-        // Увеличение координаты x на целое число с помощью оператора +
-        Point p3 = p1 + incrementValue;
+        // Увеличение координаты x на целое число
+        Point p3 = p1.AddToX(incrementValue);
         Console.WriteLine($"p1 после увеличения на {incrementValue}: {p3}");
-
-        // Использование правостороннего оператора + с целым числом
-        Point p4 = incrementValue + p1;
-        Console.WriteLine($"p1 после увеличения на {incrementValue} (правосторонний оператор): {p4}");
 
         Console.WriteLine(p1.ToString() + ' ' + p2.ToString());
     }
 
     // Метод для получения координат с клавиатуры (double)
-    static double GetCoordinate(string name)
+    public double GetCoordinate(string name)
     {
         double result;
         Console.Write($"{name}: ");
@@ -66,7 +63,7 @@ class Program
     }
 
     // Метод для получения целого числа с клавиатуры (int)
-    static int GetInteger(string message)
+    public int GetInteger(string message)
     {
         int result;
         Console.WriteLine($"{message}: ");
@@ -80,8 +77,8 @@ class Program
 
 class Point
 {
-    private double x;
-    private double y;
+    double x;
+    double y;
 
     // Конструктор
     public Point(double x, double y)
@@ -93,52 +90,41 @@ class Point
     public double GetX() => x;
     public double GetY() => y;
 
-
-    public double distanceXY(Point other)
+    public double DistanceTo(Point other)
     {
         double x = other.x - this.x;
         double y = other.y - this.y;
         return Math.Sqrt(x * x + y * y);
     }
 
-
-    // Унарные операции ++ и --
-    public static Point operator ++(Point p)
+    // Увеличение и уменьшение координаты x
+    public void IncrementX()
     {
-        p.x += 1;
-        return p;
+        x += 1;
     }
 
-    public static Point operator --(Point p)
+    public void DecrementX()
     {
-        p.x -= 1;
-        return p;
+        x -= 1;
     }
 
-    // Операции приведения типа
-    public static explicit operator int(Point p)
+    // Приведение к типу int и double
+    public int ToInt()
     {
-        return (int)p.x; // Явное приведение к int (возвращает x)
+        return (int)x;
     }
 
-    public static implicit operator double(Point p)
+    public double ToDouble()
     {
-        return p.y; // Неявное приведение к double (возвращает y)
+        return y;
     }
 
-    // Оператор + для увеличения x на целое число (левосторонний)
-    public static Point operator +(Point p, int value)
+    // Увеличение x на заданное целое значение
+    public Point AddToX(int value)
     {
-        return new Point(p.x + value, p.y);
+        return new Point(this.x + value, this.y);
     }
 
-    // Оператор + для увеличения x на целое число (правосторонний)
-    public static Point operator +(int value, Point p)
-    {
-        return new Point(p.x + value, p.y);
-    }
-
-    // Переопределение метода ToString для вывода координат
     public override string ToString()
     {
         return $"x: {x}, y: {y}";
